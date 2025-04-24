@@ -6,17 +6,24 @@ import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
 	
-	public Game() {
+	private Snake snake;
+    private Food food;
+	
+    public Game() {
 		StdDraw.enableDoubleBuffering();
-		
+		snake = new Snake();
+        food = new Food();
 		//FIXME - construct new Snake and Food objects
 	}
 	
 	public void play() {
-		while (true) { //TODO: Update this condition to check if snake is in bounds
+		while (true) { 
 			int dir = getKeypress();
+			if (dir != -1) {
+	            snake.changeDirection(dir);
+			}	
 			//Testing only: you will eventually need to do more work here
-			System.out.println("Keypress: " + dir);
+			//System.out.println("Keypress: " + dir);
 			
 			/*
 			 * 1. Pass direction to your snake
@@ -24,6 +31,15 @@ public class Game {
 			 * 3. If the food has been eaten, make a new one
 			 * 4. Update the drawing
 			 */
+			snake.move();
+			if (snake.eatFood(food)) {
+                food = new Food();
+			}
+			if (!snake.isInbounds()) {
+                System.out.println("Game Over! Snake hit the boundary.");
+                resetGame();
+			}
+			updateDrawing();
 		}
 	}
 	
@@ -45,7 +61,11 @@ public class Game {
 	 * Clears the screen, draws the snake and food, pauses, and shows the content
 	 */
 	private void updateDrawing() {
-		//FIXME
+		StdDraw.clear();  // Clear screen
+        snake.draw();     // Draw snake
+        food.draw();      // Draw food
+        StdDraw.show();   // Show the content
+        StdDraw.pause(50);
 		
 		/*
 		 * 1. Clear screen
@@ -54,7 +74,11 @@ public class Game {
 		 * 4. Show
 		 */
 	}
-	
+	private void resetGame() {
+        // Create a new Snake and Food when the game is reset
+        snake = new Snake();  // Create new Snake
+        food = new Food();    // Create new Food
+    }
 	public static void main(String[] args) {
 		Game g = new Game();
 		g.play();
